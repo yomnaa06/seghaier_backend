@@ -51,7 +51,8 @@ export class DevisService {
       orderBy: { dateDemande: 'desc' },
     });
   }
-    /**
+
+  /**
    * Gets pending Devis (EN_ATTENTE) for Admin notifications
    */
   static async getPendingDevis() {
@@ -149,5 +150,43 @@ export class DevisService {
         motifRefus: motifRefus,
       },
     });
+  }
+
+  /**
+   * Admin: Delete a devis
+   */
+  static async deleteDevis(devisId: number) {
+    const devis = await prisma.devis.findUnique({
+      where: { id: devisId }
+    });
+
+    if (!devis) {
+      throw new Error('Devis non trouvé.');
+    }
+
+    return prisma.devis.delete({
+      where: { id: devisId }
+    });
+  }
+
+  /**
+   * Admin: Get devis statistics for dashboard
+   */
+  static async getDevisStats() {
+    const [total, enAttente, valide, refus, enCours] = await Promise.all([
+      prisma.devis.count(),
+      prisma.devis.count({ where: { statut: 'EN_ATTENTE' } }),
+      prisma.devis.count({ where: { statut: 'VALIDE' } }),
+      prisma.devis.count({ where: { statut: 'REFUS' } }),
+      prisma.devis.count({ where: { statut: 'EN_COURS' } })
+    ]);
+
+    return {
+      total,
+      enAttente,
+      valide,
+      refus,
+      enCours
+    };
   }
 }

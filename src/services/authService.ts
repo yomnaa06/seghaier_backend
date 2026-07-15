@@ -163,79 +163,85 @@ export class AuthService {
   /**
    * Authenticates a User (Client or Admin) and returns a JWT token.
    */
-  static async loginUser(data: { email: string; password: string; clientType?: string }) {
-    const user = await prisma.user.findUnique({
-      where: { email: data.email },
-      include: {
-        client: true,   
-        admin: true,    
-      },
-    });
+static async loginUser(data: { email: string; password: string; clientType?: string }) {
+  const user = await prisma.user.findUnique({
+    where: { email: data.email },
+    include: {
+      client: true,   
+      admin: true,    
+    },
+  });
 
-    if (!user) {
-      throw new Error('Identifiants incorrects.');
+  if (!user) {
+    throw new Error('Identifiants incorrects.');
+  }
+
+  if (data.clientType === 'ADMIN') {
+    if (user.role !== 'ADMIN') {
+      throw new Error('Ce compte n\'est pas un compte administrateur.');
+    }
+  } 
+  else if (data.clientType === 'CLIENT') {
+    if (!user.client) {
+      throw new Error('Ce compte n\'est pas un compte client.');
+    }
+  }
+  else if (data.clientType && user.client && user.client.clientType !== data.clientType) {
+    throw new Error(`Ce compte est un ${user.client.clientType === 'INDIVIDUEL' ? 'client individuel' : 'compte société'}. Veuillez utiliser le bon formulaire de connexion.`);
+  }
+
+  const isPasswordValid = await comparePassword(data.password, user.password);
+  if (!isPasswordValid) {
+    throw new Error('Identifiants incorrects.');
+  }
+
+  //generation des tokens
+  const token = generateToken({ userId: user.id, role: user.role });
+
+  // reponse basée sur le role
+  if (user.role === 'CLIENT' && user.client) {
+    const client = user.client;
+    
+    let userData: any = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      clientType: client.clientType,
+      nom: client.nom,
+      telephone: client.telephone,
+      adresse: client.adresse,
+      codePostal: client.codePostal,
+      ville: client.ville,
+      brancheContact: client.brancheContact,
+      produitsInterets: client.produitsInterets,
+    };
+
+    if (client.clientType === 'INDIVIDUEL') {
+      userData.prenom = client.prenom;
+    } else {
+      userData.matriculeFiscal = client.matriculeFiscal;
     }
 
-    // If clientType is provided, verify it matches
-    if (data.clientType && user.client && user.client.clientType !== data.clientType) {
-      throw new Error(`Ce compte est un ${user.client.clientType === 'INDIVIDUEL' ? 'client individuel' : 'compte société'}. Veuillez utiliser le bon formulaire de connexion.`);
-    }
-
-    const isPasswordValid = await comparePassword(data.password, user.password);
-    if (!isPasswordValid) {
-      throw new Error('Identifiants incorrects.');
-    }
-
-
-    // Generate JWT token
-    const token = generateToken({ userId: user.id, role: user.role });
-
-    // Format response based on role
-    if (user.role === 'CLIENT' && user.client) {
-      const client = user.client;
-      
-      // generer reponse selon type de client
-      let userData: any = {
+    return {
+      token,
+      user: userData,
+    };
+  } else if (user.role === 'ADMIN' && user.admin) {
+    return {
+      token,
+      user: {
         id: user.id,
         email: user.email,
         role: user.role,
-        clientType: client.clientType,
-        nom: client.nom,
-        telephone: client.telephone,
-        adresse: client.adresse,
-        codePostal: client.codePostal,
-        ville: client.ville,
-        brancheContact: client.brancheContact,
-        produitsInterets: client.produitsInterets,
-      };
-
-      if (client.clientType === 'INDIVIDUEL') {
-        userData.prenom = client.prenom;
-      } else {
-        userData.matriculeFiscal = client.matriculeFiscal;
-      }
-
-      return {
-        token,
-        user: userData,
-      };
-    } else if (user.role === 'ADMIN' && user.admin) {
-      return {
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          username: user.admin.username,
-          nom: user.admin.nom,
-          prenom: user.admin.prenom,
-        },
-      };
-    }
-
-    throw new Error('Profil utilisateur non trouvé.');
+        username: user.admin.username,
+        nom: user.admin.nom,
+        prenom: user.admin.prenom,
+      },
+    };
   }
 
+  throw new Error('Profil utilisateur non trouvé.');
+}
   /**
    * Retrieves profile details for a client.
    */
@@ -329,5 +335,63 @@ export class AuthService {
         fields: ['nomSociete', 'email', 'password', 'matriculeFiscal', 'telephone', 'adresse', 'codePostal', 'ville', 'brancheContact', 'produitsInterets']
       }
     };
+  }
+    /**
+   * Generate password reset token
+   */
+  static async generateResetToken(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new Error('Aucun compte trouvé avec cet email.');
+    }
+
+    // Generate reset token
+    const crypto = await import('crypto');
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+
+    await prisma.user.update({
+      where: { email },
+      data: {
+        resetToken,
+        resetTokenExpiry,
+      },
+    });
+
+    return resetToken;
+  }
+
+  /**
+   * Reset password using token
+   */
+  static async resetPassword(token: string, newPassword: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        resetToken: token,
+        resetTokenExpiry: {
+          gt: new Date(), // Token not expired
+        },
+      },
+    });
+
+    if (!user) {
+      throw new Error('Token invalide ou expiré.');
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    });
+
+    return { success: true, message: 'Mot de passe réinitialisé avec succès.' };
   }
 }

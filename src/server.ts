@@ -5,14 +5,14 @@ import dotenv from 'dotenv';
 // Load environment variables from .env
 dotenv.config();
 
-// Import routers
+// Importation de routers
 import authRoutes from './routes/authRoutes';
 import devisRoutes from './routes/devisRoutes';
 import reclamationRoutes from './routes/reclamationRoutes';
 import adminRoutes from './routes/adminRoutes';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Enable CORS
 app.use(cors());

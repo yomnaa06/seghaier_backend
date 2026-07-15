@@ -126,4 +126,70 @@ export class AuthController {
       });
     }
   }
+    /**
+   * Request password reset
+   * POST /api/auth/forgot-password
+   */
+  static async forgotPassword(req: AuthRequest, res: Response) {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          message: 'L\'email est obligatoire.',
+        });
+      }
+
+      const resetToken = await AuthService.generateResetToken(email);
+
+      // For testing - return token directly (remove in production!)
+      return res.status(200).json({
+        success: true,
+        message: 'Token généré avec succès.',
+        data: { resetToken },
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        message: error.message || 'Erreur lors de la demande de réinitialisation.',
+      });
+    }
+  }
+
+  /**
+   * Reset password with token
+   * POST /api/auth/reset-password
+   */
+  static async resetPassword(req: AuthRequest, res: Response) {
+    try {
+      const { token, password } = req.body;
+
+      if (!token || !password) {
+        return res.status(400).json({
+          success: false,
+          message: 'Token et nouveau mot de passe sont obligatoires.',
+        });
+      }
+
+      if (password.length < 8) {
+        return res.status(400).json({
+          success: false,
+          message: 'Le mot de passe doit contenir au moins 8 caractères.',
+        });
+      }
+
+      const result = await AuthService.resetPassword(token, password);
+
+      return res.status(200).json({
+        success: true,
+        message: result.message,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        message: error.message || 'Erreur lors de la réinitialisation du mot de passe.',
+      });
+    }
+  }
 }

@@ -64,6 +64,27 @@ export class DevisController {
   }
 
   /**
+   * Client: Get a single devis by ID
+   * GET /api/devis/:id
+   */
+  static async getOne(req: AuthRequest, res: Response) {
+    try {
+      const devisId = parseInt(req.params.id, 10);
+      if (isNaN(devisId)) {
+        return res.status(400).json({ success: false, message: 'ID de devis invalide.' });
+      }
+
+      const devis = await DevisService.getDevisById(devisId);
+      return res.status(200).json({ success: true, data: devis });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        message: error.message || 'Erreur lors de la récupération du devis.',
+      });
+    }
+  }
+
+  /**
    * Admin: Get all devis requests
    * GET /api/admin/devis
    */
@@ -130,6 +151,49 @@ export class DevisController {
       return res.status(500).json({
         success: false,
         message: error.message || 'Erreur lors du refus du devis.',
+      });
+    }
+  }
+
+  /**
+   * Admin: Delete a devis
+   * DELETE /api/admin/devis/:id
+   */
+  static async delete(req: AuthRequest, res: Response) {
+    try {
+      const devisId = parseInt(req.params.id, 10);
+      if (isNaN(devisId)) {
+        return res.status(400).json({ success: false, message: 'ID de devis invalide.' });
+      }
+
+      await DevisService.deleteDevis(devisId);
+      return res.status(200).json({
+        success: true,
+        message: 'Devis supprimé avec succès.',
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        message: error.message || 'Erreur lors de la suppression du devis.',
+      });
+    }
+  }
+
+  /**
+   * Admin: Get devis statistics
+   * GET /api/admin/devis/stats
+   */
+  static async getStats(_req: AuthRequest, res: Response) {
+    try {
+      const stats = await DevisService.getDevisStats();
+      return res.status(200).json({
+        success: true,
+        data: stats,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        message: error.message || 'Erreur lors de la récupération des statistiques.',
       });
     }
   }
