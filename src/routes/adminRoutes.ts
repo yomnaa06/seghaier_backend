@@ -4,7 +4,7 @@ import { authenticateToken, requireAdmin } from '../middlewares/authMiddleware';
 
 const router = Router();
 
-// Admin Dashboard & Management
+// Admin Dashboard et Management
 router.get('/clients', authenticateToken, requireAdmin, AdminController.getClients);
 router.get('/stats', authenticateToken, requireAdmin, AdminController.getStats);
 router.get('/dashboard', authenticateToken, requireAdmin, AdminController.getDashboard);

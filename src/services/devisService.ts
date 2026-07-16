@@ -1,11 +1,9 @@
 import prisma from '../config/db';
 
 export class DevisService {
-  /**
-   * Creates a new Devis request for a Client.
-   */
+  //creation d'un nouveau devis pour client donné
   static async createDevis(clientId: number, data: { brancheContact: string; produitDesire: string; description: string }) {
-    // Verify client exists
+    // Verification que  client exists
     const clientExists = await prisma.client.findUnique({
       where: { id: clientId },
     });
@@ -25,9 +23,7 @@ export class DevisService {
     });
   }
 
-  /**
-   * Gets the list of Devis requested by a specific Client.
-   */
+  // yekhou liste de devis requested by a speciic client
   static async getClientDevis(clientId: number) {
     return prisma.devis.findMany({
       where: { clientId: clientId },
@@ -35,9 +31,7 @@ export class DevisService {
     });
   }
 
-  /**
-   * Gets all Devis requests (for Admin).
-   */
+  // get all devis requests for admin
   static async getAllDevis() {
     return prisma.devis.findMany({
       include: {
@@ -52,9 +46,7 @@ export class DevisService {
     });
   }
 
-  /**
-   * Gets pending Devis (EN_ATTENTE) for Admin notifications
-   */
+ // prend devis en attente pour admin dashboard
   static async getPendingDevis() {
     return prisma.devis.findMany({
       where: { statut: 'EN_ATTENTE' },
@@ -79,9 +71,7 @@ export class DevisService {
     });
   }
 
-  /**
-   * Gets a specific Devis by ID with client details
-   */
+ // get specific devis by id for client 
   static async getDevisById(devisId: number) {
     const devis = await prisma.devis.findUnique({
       where: { id: devisId },
@@ -105,9 +95,7 @@ export class DevisService {
     return devis;
   }
 
-  /**
-   * Validates a Devis (sets status to Valide).
-   */
+ // valider devis
   static async validateDevis(devisId: number) {
     const devis = await prisma.devis.findUnique({
       where: { id: devisId },
@@ -126,9 +114,7 @@ export class DevisService {
     });
   }
 
-  /**
-   * Refuses a Devis (sets status to Refus with reason).
-   */
+ // refuser devis
   static async refuseDevis(devisId: number, motifRefus: string) {
     const devis = await prisma.devis.findUnique({
       where: { id: devisId },
@@ -152,9 +138,7 @@ export class DevisService {
     });
   }
 
-  /**
-   * Admin: Delete a devis
-   */
+ // admin efface devis
   static async deleteDevis(devisId: number) {
     const devis = await prisma.devis.findUnique({
       where: { id: devisId }
@@ -169,9 +153,7 @@ export class DevisService {
     });
   }
 
-  /**
-   * Admin: Get devis statistics for dashboard
-   */
+  // admin prend devis statistiques pour dashboard
   static async getDevisStats() {
     const [total, enAttente, valide, refus, enCours] = await Promise.all([
       prisma.devis.count(),

@@ -2,13 +2,9 @@ import prisma from '../config/db';
 import { hashPassword, comparePassword } from '../utils/crypto';
 import { generateToken } from '../utils/auth';
 
-/**
- * Service for Authentication and User management
- */
+//service authentification and user management
 export class AuthService {
-  /**
-   * Registers a new Individual Client.
-   */
+  // Handles individual client sign-up
   static async registerIndividual(data: {
     email: string;
     password: string;
@@ -34,7 +30,7 @@ export class AuthService {
 
     // Run transaction
     return prisma.$transaction(async (tx) => {
-      // 1. Create User
+      // Creation de User
       const user = await tx.user.create({
         data: {
           email: data.email,
@@ -44,7 +40,7 @@ export class AuthService {
         },
       });
 
-      // 2. creation du client de type individuel
+      //  creation du client de type individuel
       const client = await tx.client.create({
         data: {
           id: user.id,
@@ -83,9 +79,7 @@ export class AuthService {
     });
   }
 
-  /**
-   * Registers a new Company Client.
-   */
+  //enregistrement d'un nouveau client , type societe
   static async registerCompany(data: {
     email: string;
     password: string;
@@ -111,7 +105,7 @@ export class AuthService {
 
     // Run transaction
     return prisma.$transaction(async (tx) => {
-      // 1. Create User
+      //creation de user
       const user = await tx.user.create({
         data: {
           email: data.email,
@@ -121,7 +115,7 @@ export class AuthService {
         },
       });
 
-      // 2. Create Client profile with SOCIETE type
+      //  Create Client profile with SOCIETE type
       const client = await tx.client.create({
         data: {
           id: user.id,
@@ -160,9 +154,7 @@ export class AuthService {
     });
   }
 
-  /**
-   * Authenticates a User (Client or Admin) and returns a JWT token.
-   */
+  //authentification du client ou admin et return jwt token
 static async loginUser(data: { email: string; password: string; clientType?: string }) {
   const user = await prisma.user.findUnique({
     where: { email: data.email },
@@ -242,9 +234,7 @@ static async loginUser(data: { email: string; password: string; clientType?: str
 
   throw new Error('Profil utilisateur non trouvé.');
 }
-  /**
-   * Retrieves profile details for a client.
-   */
+  // extraction profile details for a client basé sur userId
   static async getClientProfile(userId: number) {
     const client = await prisma.client.findUnique({
       where: { id: userId },
@@ -279,9 +269,7 @@ static async loginUser(data: { email: string; password: string; clientType?: str
     };
   }
 
-  /**
-   * Updates profile details for a client.
-   */
+ // update de profil client basé sur userId et donnés fournies
   static async updateClientProfile(
     userId: number,
     data: {
@@ -321,9 +309,7 @@ static async loginUser(data: { email: string; password: string; clientType?: str
     return updatedClient;
   }
 
-  /**
-   * Gets client type info for registration forms
-   */
+ // yekhou type client for registration forms
   static async getClientTypes() {
     return {
       INDIVIDUEL: {
@@ -336,9 +322,7 @@ static async loginUser(data: { email: string; password: string; clientType?: str
       }
     };
   }
-    /**
-   * Generate password reset token
-   */
+    //generating password reset token
   static async generateResetToken(email: string) {
     const user = await prisma.user.findUnique({
       where: { email },
@@ -364,9 +348,7 @@ static async loginUser(data: { email: string; password: string; clientType?: str
     return resetToken;
   }
 
-  /**
-   * Reset password using token
-   */
+  //resetting mot de passe avec token
   static async resetPassword(token: string, newPassword: string) {
     const user = await prisma.user.findFirst({
       where: {

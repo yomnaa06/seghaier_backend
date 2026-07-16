@@ -2,9 +2,7 @@ import prisma from '../config/db';
 import { StatutReclamation } from '@prisma/client';
 
 export class ReclamationService {
-  /**
-   * Client: Creates a new Reclamation.
-   */
+  // creation d'une noiuvelle reclamation client
   static async createReclamation(clientId: number, data: { destinataire: string; sujet: string; description: string }) {
     // Verify client exists
     const clientExists = await prisma.client.findUnique({
@@ -26,9 +24,7 @@ export class ReclamationService {
     });
   }
 
-  /**
-   * Client: Retrieves complaints history for a specific Client.
-   */
+ // récupération historique reclamations d'un client
   static async getClientReclamations(clientId: number) {
     return prisma.reclamation.findMany({
       where: { clientId: clientId },
@@ -36,9 +32,7 @@ export class ReclamationService {
     });
   }
 
-  /**
-   * Admin: Retrieves all complaints.
-   */
+  // récupération de toutes les réclamations par l'admin
   static async getAllReclamations() {
     return prisma.reclamation.findMany({
       include: {
@@ -53,10 +47,7 @@ export class ReclamationService {
     });
   }
 
-  /**
-   * Admin: Retrieves complaints that are pending (En_attente or En_cours).
-   * Mapped from "getReclamationsEnAttente()" in the Sequence Diagram.
-   */
+  // récupération de toutes les réclamations en attente ou en cours par l'admin
   static async getPendingReclamations() {
     return prisma.reclamation.findMany({
       where: {
@@ -75,9 +66,7 @@ export class ReclamationService {
       orderBy: { date: 'asc' },
     });
   }
-    /**
-   * Admin: Gets a specific reclamation by ID with client details
-   */
+   // get a specific reclamation by id for admin
   static async getReclamationById(reclamationId: number) {
     const reclamation = await prisma.reclamation.findUnique({
       where: { id: reclamationId },
@@ -101,10 +90,8 @@ export class ReclamationService {
     return reclamation;
   }
 
-  /**
-   * Admin: Processes a Reclamation by updating its status and response.
-   * Mapped from "traiterReclamation(id, statut, reponse)" in the Sequence Diagram.
-   */
+  // processing reclamation by updating its status and adding admin response
+  // mapped from "traiterReclamation(id, statut, reponse)" dans le diagramme de séquence
   static async processReclamation(
     reclamationId: number,
     data: { statut: StatutReclamation; reponseAdmin: string }

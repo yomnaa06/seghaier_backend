@@ -5,10 +5,8 @@ import { DevisService } from '../services/devisService';
 import { ReclamationService } from '../services/reclamationService';
 
 export class AdminController {
-  /**
-   * Admin: Retrieves the list of all clients.
-   * GET /api/admin/clients
-   */
+  // Admin prend liste de tous les clients
+  // GET /api/admin/clients
   static async getClients(_req: AuthRequest, res: Response) {
     try {
       const clients = await AdminService.getClientsList();
@@ -24,10 +22,8 @@ export class AdminController {
     }
   }
 
-  /**
-   * Admin: Retrieves aggregated dashboard statistics.
-   * GET /api/admin/stats
-   */
+  // Admin yekhou dashboard statistics
+  // GET /api/admin/stats
   static async getStats(_req: AuthRequest, res: Response) {
     try {
       const stats = await AdminService.getDashboardStats();
@@ -43,10 +39,8 @@ export class AdminController {
     }
   }
 
-  /**
-   * Admin: Get complete dashboard with notifications (pending items)
-   * GET /api/admin/dashboard
-   */
+ // Admin gets complete dashboard with notifications 
+ // GET /api/admin/dashboard
   static async getDashboard(_req: AuthRequest, res: Response) {
     try {
       const statsData = await AdminService.getDashboardStats();
@@ -79,10 +73,8 @@ export class AdminController {
     }
   }
 
-  /**
-   * Admin: Get notification summary (for badge count)
-   * GET /api/admin/notifications
-   */
+ // Admin recoit sommaire de notificatuons
+ // GET /api/admin/notifications
   static async getNotifications(_req: AuthRequest, res: Response) {
     try {
       const pendingDevis = await DevisService.getPendingDevis();
@@ -112,10 +104,8 @@ export class AdminController {
     }
   }
 
-  /**
-   * Admin: Validate a devis
-   * PUT /api/admin/devis/:id/validate
-   */
+  // Admin Valide un devis
+  // PUT /api/admin/devis/:id/validate
   static async validateDevis(req: AuthRequest, res: Response) {
     try {
       const id = parseInt(req.params.id);
@@ -137,10 +127,8 @@ export class AdminController {
     }
   }
 
-  /**
-   * Admin: Refuse a devis with reason
-   * PUT /api/admin/devis/:id/refuse
-   */
+  // Admin Refuse un devis avec motif
+  // PUT /api/admin/devis/:id/refuse
   static async refuseDevis(req: AuthRequest, res: Response) {
     try {
       const id = parseInt(req.params.id);
@@ -167,10 +155,9 @@ export class AdminController {
     }
   }
 
-  /**
-   * Admin: Process a reclamation
-   * PUT /api/admin/reclamations/:id/process
-   */
+ //Admin Processes une reclamation
+ //PUT /api/admin/reclamations/:id/process
+   
   static async processReclamation(req: AuthRequest, res: Response) {
     try {
       const id = parseInt(req.params.id);

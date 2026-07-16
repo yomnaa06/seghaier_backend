@@ -1,9 +1,7 @@
 import prisma from '../config/db';
 
 export class AdminService {
-  /**
-   * Retrieves the list of all registered clients (for Admin).
-   */
+ // récupération de liste de tous les clients enregistrés
   static async getClientsList() {
     return prisma.client.findMany({
       include: {
@@ -18,14 +16,12 @@ export class AdminService {
     });
   }
 
-  /**
-   * Computes key metrics and statistics for the Admin Dashboard.
-   */
+ // statistics pour admin dashboard
   static async getDashboardStats() {
-    // 1. Total Clients count
+    // Total Clients count
     const totalClients = await prisma.client.count();
 
-    // 2. Devis stats (total + count per status)
+    // Devis stats (total + count par status)
     const devisCount = await prisma.devis.count();
     const devisByStatus = await prisma.devis.groupBy({
       by: ['statut'],
@@ -41,7 +37,7 @@ export class AdminService {
       REFUS: devisByStatus.find((d) => d.statut === 'REFUS')?._count.id || 0,
     };
 
-    // 3. Reclamation stats (total + count per status)
+    //  Reclamation stats (total + count par status)
     const reclamationCount = await prisma.reclamation.count();
     const reclamationByStatus = await prisma.reclamation.groupBy({
       by: ['statut'],

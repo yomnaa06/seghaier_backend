@@ -4,10 +4,8 @@ import { ReclamationService } from '../services/reclamationService';
 import { StatutReclamation } from '@prisma/client';
 
 export class ReclamationController {
-  /**
-   * Client: Create a new reclamation
-   * POST /api/reclamations
-   */
+  // Client: Create a new reclamation
+  //POST /api/reclamations
   static async create(req: AuthRequest, res: Response) {
     try {
       const clientId = req.user?.userId;
@@ -43,10 +41,8 @@ export class ReclamationController {
     }
   }
 
-  /**
-   * Client: Get their own reclamations history
-   * GET /api/reclamations/my
-   */
+  // Client: Get their own reclamations historique
+  // GET /api/reclamations/my
   static async getClientHistory(req: AuthRequest, res: Response) {
     try {
       const clientId = req.user?.userId;
@@ -64,10 +60,8 @@ export class ReclamationController {
     }
   }
 
-  /**
-   * Admin: Get all reclamations
-   * GET /api/admin/reclamations
-   */
+  // Admin: Get all reclamations
+  // GET /api/admin/reclamations
   static async listAll(_req: AuthRequest, res: Response) {
     try {
       const reclamations = await ReclamationService.getAllReclamations();
@@ -80,10 +74,9 @@ export class ReclamationController {
     }
   }
 
-  /**
-   * Admin: Get pending reclamations
-   * GET /api/admin/reclamations/pending
-   */
+  // Admin: Get pending reclamations
+  // GET /api/admin/reclamations/pending
+   
   static async listPending(_req: AuthRequest, res: Response) {
     try {
       const reclamations = await ReclamationService.getPendingReclamations();
@@ -96,10 +89,8 @@ export class ReclamationController {
     }
   }
 
-  /**
-   * Admin: Process (update) a reclamation
-   * PUT /api/admin/reclamations/:id/process
-   */
+  // Admin: update une reclamation
+  // PUT /api/admin/reclamations/:id/process
   static async process(req: AuthRequest, res: Response) {
     try {
       const reclamationId = parseInt(req.params.id, 10);

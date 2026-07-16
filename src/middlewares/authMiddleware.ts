@@ -9,10 +9,8 @@ export interface AuthRequest extends Request {
   };
 }
 
-/**
- * Middleware to authenticate JWT tokens from HTTP headers.
- * Expects header format: Authorization: Bearer <JWT_TOKEN>
- */
+// Middleware pour authentification des JWT tokens from HTTP header
+// format: Authorization: Bearer <JWT_TOKEN>
 export function authenticateToken(req: AuthRequest, res: Response, next: NextFunction) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Extract token from "Bearer <token>"
@@ -30,9 +28,7 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
   return next();
 }
 
-/**
- * Middleware to restrict access to CLIENT users only.
- */
+// Middleware pour restriction d'access to CLIENT users only.
 export function requireClient(req: AuthRequest, res: Response, next: NextFunction) {
   if (!req.user || req.user.role !== 'CLIENT') {
     return res.status(403).json({ message: 'Accès interdit. Réservé aux clients.' });
@@ -40,9 +36,7 @@ export function requireClient(req: AuthRequest, res: Response, next: NextFunctio
   return next();
 }
 
-/**
- * Middleware to restrict access to ADMIN users only.
- */
+// Middleware pour restriction d'access to ADMIN users only
 export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction) {
   if (!req.user || req.user.role !== 'ADMIN') {
     return res.status(403).json({ message: 'Accès interdit. Réservé aux administrateurs.' });

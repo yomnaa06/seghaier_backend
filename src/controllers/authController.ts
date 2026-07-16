@@ -1,12 +1,11 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { AuthService } from '../services/authService';
+import { EmailService } from '../services/emailService';
 
 export class AuthController {
-  /**
-   * Register a new client (Individual or Company)
-   * POST /api/auth/register
-   */
+  // enregistrement d'un nouveau client (Individual or Company)
+  // POST /api/auth/register
   static async register(req: AuthRequest, res: Response) {
     try {
       const { clientType, email, password, nom, prenom, nomSociete, telephone, adresse, codePostal, ville, matriculeFiscal, brancheContact, produitsInterets } = req.body;
@@ -51,10 +50,8 @@ export class AuthController {
     }
   }
 
-  /**
-   * Login for Client or Admin
-   * POST /api/auth/login
-   */
+  // Login pour Client ou Admin
+  // POST /api/auth/login
   static async login(req: AuthRequest, res: Response) {
     try {
       const { email, password, clientType } = req.body;
@@ -80,10 +77,8 @@ export class AuthController {
     }
   }
 
-  /**
-   * Get authenticated client profile
-   * GET /api/auth/profile
-   */
+  // Get authenticated client profile
+  // GET /api/auth/profile
   static async getProfile(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.userId;
@@ -101,10 +96,8 @@ export class AuthController {
     }
   }
 
-  /**
-   * Update authenticated client profile
-   * PUT /api/auth/profile
-   */
+  // Update authenticated client profile
+  // PUT /api/auth/profile
   static async updateProfile(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.userId;
@@ -126,10 +119,9 @@ export class AuthController {
       });
     }
   }
-    /**
-   * Request password reset
-   * POST /api/auth/forgot-password
-   */
+
+  // Request password reset - sends email with reset link
+  // POST /api/auth/forgot-password
   static async forgotPassword(req: AuthRequest, res: Response) {
     try {
       const { email } = req.body;
@@ -143,11 +135,12 @@ export class AuthController {
 
       const resetToken = await AuthService.generateResetToken(email);
 
-      // For testing - return token directly (remove in production!)
+      // Send email with reset link
+      await EmailService.sendPasswordResetEmail(email, resetToken);
+
       return res.status(200).json({
         success: true,
-        message: 'Token généré avec succès.',
-        data: { resetToken },
+        message: 'Un email de réinitialisation a été envoyé.',
       });
     } catch (error: any) {
       return res.status(500).json({
@@ -157,10 +150,8 @@ export class AuthController {
     }
   }
 
-  /**
-   * Reset password with token
-   * POST /api/auth/reset-password
-   */
+  // Reset password with token
+  // POST /api/auth/reset-password
   static async resetPassword(req: AuthRequest, res: Response) {
     try {
       const { token, password } = req.body;

@@ -3,10 +3,8 @@ import { AuthRequest } from '../middlewares/authMiddleware';
 import { DevisService } from '../services/devisService';
 
 export class DevisController {
-  /**
-   * Client: Create a new Devis request
-   * POST /api/devis
-   */
+  // Client: Creation d'une nouvelle demande de devis
+  // POST /api/devis
   static async create(req: AuthRequest, res: Response) {
     try {
       const clientId = req.user?.userId;
@@ -42,10 +40,8 @@ export class DevisController {
     }
   }
 
-  /**
-   * Client: Get their own devis history
-   * GET /api/devis/my
-   */
+  // Client: récupération de l'historique de leurs devis 
+  //GET /api/devis/my
   static async getClientHistory(req: AuthRequest, res: Response) {
     try {
       const clientId = req.user?.userId;
@@ -63,10 +59,8 @@ export class DevisController {
     }
   }
 
-  /**
-   * Client: Get a single devis by ID
-   * GET /api/devis/:id
-   */
+ // Client: Get a specific devis by ID
+ // GET /api/devis/:id
   static async getOne(req: AuthRequest, res: Response) {
     try {
       const devisId = parseInt(req.params.id, 10);
@@ -84,10 +78,8 @@ export class DevisController {
     }
   }
 
-  /**
-   * Admin: Get all devis requests
-   * GET /api/admin/devis
-   */
+  // Admin: Get all devis requests
+  // GET /api/admin/devis
   static async listAll(_req: AuthRequest, res: Response) {
     try {
       const devisList = await DevisService.getAllDevis();
@@ -100,10 +92,8 @@ export class DevisController {
     }
   }
 
-  /**
-   * Admin: Validate a devis
-   * PUT /api/admin/devis/:id/validate
-   */
+ // Admin: Valider un devis
+ // PUT /api/admin/devis/:id/validate
   static async validate(req: AuthRequest, res: Response) {
     try {
       const devisId = parseInt(req.params.id, 10);
@@ -125,10 +115,8 @@ export class DevisController {
     }
   }
 
-  /**
-   * Admin: Refuse a devis with reason
-   * PUT /api/admin/devis/:id/refuse
-   */
+  // Admin: Refuser undevis avec motif
+  // PUT /api/admin/devis/:id/refuse
   static async refuse(req: AuthRequest, res: Response) {
     try {
       const devisId = parseInt(req.params.id, 10);
@@ -155,10 +143,8 @@ export class DevisController {
     }
   }
 
-  /**
-   * Admin: Delete a devis
-   * DELETE /api/admin/devis/:id
-   */
+  // Admin: Delete a devis
+  // DELETE /api/admin/devis/:id
   static async delete(req: AuthRequest, res: Response) {
     try {
       const devisId = parseInt(req.params.id, 10);
@@ -179,10 +165,8 @@ export class DevisController {
     }
   }
 
-  /**
-   * Admin: Get devis statistics
-   * GET /api/admin/devis/stats
-   */
+  // Admin: Get devis statistiques
+  // GET /api/admin/devis/stats
   static async getStats(_req: AuthRequest, res: Response) {
     try {
       const stats = await DevisService.getDevisStats();
