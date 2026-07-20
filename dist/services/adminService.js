@@ -6,9 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminService = void 0;
 const db_1 = __importDefault(require("../config/db"));
 class AdminService {
-    /**
-     * Retrieves the list of all registered clients (for Admin).
-     */
+    // récupération de liste de tous les clients enregistrés
     static async getClientsList() {
         return db_1.default.client.findMany({
             include: {
@@ -22,13 +20,11 @@ class AdminService {
             orderBy: { nom: 'asc' },
         });
     }
-    /**
-     * Computes key metrics and statistics for the Admin Dashboard.
-     */
+    // statistics pour admin dashboard
     static async getDashboardStats() {
-        // 1. Total Clients count
+        // Total Clients count
         const totalClients = await db_1.default.client.count();
-        // 2. Devis stats (total + count per status)
+        // Devis stats (total + count par status)
         const devisCount = await db_1.default.devis.count();
         const devisByStatus = await db_1.default.devis.groupBy({
             by: ['statut'],
@@ -42,7 +38,7 @@ class AdminService {
             VALIDE: devisByStatus.find((d) => d.statut === 'VALIDE')?._count.id || 0,
             REFUS: devisByStatus.find((d) => d.statut === 'REFUS')?._count.id || 0,
         };
-        // 3. Reclamation stats (total + count per status)
+        //  Reclamation stats (total + count par status)
         const reclamationCount = await db_1.default.reclamation.count();
         const reclamationByStatus = await db_1.default.reclamation.groupBy({
             by: ['statut'],

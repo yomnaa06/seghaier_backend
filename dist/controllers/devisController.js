@@ -3,10 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DevisController = void 0;
 const devisService_1 = require("../services/devisService");
 class DevisController {
-    /**
-     * Client: Create a new Devis request
-     * POST /api/devis
-     */
+    // Client: Creation d'une nouvelle demande de devis
+    // POST /api/devis
     static async create(req, res) {
         try {
             const clientId = req.user?.userId;
@@ -38,10 +36,8 @@ class DevisController {
             });
         }
     }
-    /**
-     * Client: Get their own devis history
-     * GET /api/devis/my
-     */
+    // Client: récupération de l'historique de leurs devis 
+    //GET /api/devis/my
     static async getClientHistory(req, res) {
         try {
             const clientId = req.user?.userId;
@@ -58,10 +54,8 @@ class DevisController {
             });
         }
     }
-    /**
-     * Client: Get a single devis by ID
-     * GET /api/devis/:id
-     */
+    // Client: Get a specific devis by ID
+    // GET /api/devis/:id
     static async getOne(req, res) {
         try {
             const devisId = parseInt(req.params.id, 10);
@@ -78,10 +72,8 @@ class DevisController {
             });
         }
     }
-    /**
-     * Admin: Get all devis requests
-     * GET /api/admin/devis
-     */
+    // Admin: Get all devis requests
+    // GET /api/admin/devis
     static async listAll(_req, res) {
         try {
             const devisList = await devisService_1.DevisService.getAllDevis();
@@ -94,10 +86,8 @@ class DevisController {
             });
         }
     }
-    /**
-     * Admin: Validate a devis
-     * PUT /api/admin/devis/:id/validate
-     */
+    // Admin: Valider un devis
+    // PUT /api/admin/devis/:id/validate
     static async validate(req, res) {
         try {
             const devisId = parseInt(req.params.id, 10);
@@ -118,10 +108,8 @@ class DevisController {
             });
         }
     }
-    /**
-     * Admin: Refuse a devis with reason
-     * PUT /api/admin/devis/:id/refuse
-     */
+    // Admin: Refuser undevis avec motif
+    // PUT /api/admin/devis/:id/refuse
     static async refuse(req, res) {
         try {
             const devisId = parseInt(req.params.id, 10);
@@ -146,10 +134,8 @@ class DevisController {
             });
         }
     }
-    /**
-     * Admin: Delete a devis
-     * DELETE /api/admin/devis/:id
-     */
+    // Admin: Delete a devis
+    // DELETE /api/admin/devis/:id
     static async delete(req, res) {
         try {
             const devisId = parseInt(req.params.id, 10);
@@ -169,10 +155,8 @@ class DevisController {
             });
         }
     }
-    /**
-     * Admin: Get devis statistics
-     * GET /api/admin/devis/stats
-     */
+    // Admin: Get devis statistiques
+    // GET /api/admin/devis/stats
     static async getStats(_req, res) {
         try {
             const stats = await devisService_1.DevisService.getDevisStats();

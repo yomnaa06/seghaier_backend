@@ -5,10 +5,8 @@ const adminService_1 = require("../services/adminService");
 const devisService_1 = require("../services/devisService");
 const reclamationService_1 = require("../services/reclamationService");
 class AdminController {
-    /**
-     * Admin: Retrieves the list of all clients.
-     * GET /api/admin/clients
-     */
+    // Admin prend liste de tous les clients
+    // GET /api/admin/clients
     static async getClients(_req, res) {
         try {
             const clients = await adminService_1.AdminService.getClientsList();
@@ -24,10 +22,8 @@ class AdminController {
             });
         }
     }
-    /**
-     * Admin: Retrieves aggregated dashboard statistics.
-     * GET /api/admin/stats
-     */
+    // Admin yekhou dashboard statistics
+    // GET /api/admin/stats
     static async getStats(_req, res) {
         try {
             const stats = await adminService_1.AdminService.getDashboardStats();
@@ -43,10 +39,8 @@ class AdminController {
             });
         }
     }
-    /**
-     * Admin: Get complete dashboard with notifications (pending items)
-     * GET /api/admin/dashboard
-     */
+    // Admin gets complete dashboard with notifications 
+    // GET /api/admin/dashboard
     static async getDashboard(_req, res) {
         try {
             const statsData = await adminService_1.AdminService.getDashboardStats();
@@ -78,10 +72,8 @@ class AdminController {
             });
         }
     }
-    /**
-     * Admin: Get notification summary (for badge count)
-     * GET /api/admin/notifications
-     */
+    // Admin recoit sommaire de notificatuons
+    // GET /api/admin/notifications
     static async getNotifications(_req, res) {
         try {
             const pendingDevis = await devisService_1.DevisService.getPendingDevis();
@@ -110,10 +102,8 @@ class AdminController {
             });
         }
     }
-    /**
-     * Admin: Validate a devis
-     * PUT /api/admin/devis/:id/validate
-     */
+    // Admin Valide un devis
+    // PUT /api/admin/devis/:id/validate
     static async validateDevis(req, res) {
         try {
             const id = parseInt(req.params.id);
@@ -134,10 +124,8 @@ class AdminController {
             });
         }
     }
-    /**
-     * Admin: Refuse a devis with reason
-     * PUT /api/admin/devis/:id/refuse
-     */
+    // Admin Refuse un devis avec motif
+    // PUT /api/admin/devis/:id/refuse
     static async refuseDevis(req, res) {
         try {
             const id = parseInt(req.params.id);
@@ -162,10 +150,8 @@ class AdminController {
             });
         }
     }
-    /**
-     * Admin: Process a reclamation
-     * PUT /api/admin/reclamations/:id/process
-     */
+    //Admin Processes une reclamation
+    //PUT /api/admin/reclamations/:id/process
     static async processReclamation(req, res) {
         try {
             const id = parseInt(req.params.id);

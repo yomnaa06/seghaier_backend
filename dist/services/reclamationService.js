@@ -6,9 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReclamationService = void 0;
 const db_1 = __importDefault(require("../config/db"));
 class ReclamationService {
-    /**
-     * Client: Creates a new Reclamation.
-     */
+    // creation d'une noiuvelle reclamation client
     static async createReclamation(clientId, data) {
         // Verify client exists
         const clientExists = await db_1.default.client.findUnique({
@@ -27,18 +25,14 @@ class ReclamationService {
             },
         });
     }
-    /**
-     * Client: Retrieves complaints history for a specific Client.
-     */
+    // récupération historique reclamations d'un client
     static async getClientReclamations(clientId) {
         return db_1.default.reclamation.findMany({
             where: { clientId: clientId },
             orderBy: { date: 'desc' },
         });
     }
-    /**
-     * Admin: Retrieves all complaints.
-     */
+    // récupération de toutes les réclamations par l'admin
     static async getAllReclamations() {
         return db_1.default.reclamation.findMany({
             include: {
@@ -52,10 +46,7 @@ class ReclamationService {
             orderBy: { date: 'desc' },
         });
     }
-    /**
-     * Admin: Retrieves complaints that are pending (En_attente or En_cours).
-     * Mapped from "getReclamationsEnAttente()" in the Sequence Diagram.
-     */
+    // récupération de toutes les réclamations en attente ou en cours par l'admin
     static async getPendingReclamations() {
         return db_1.default.reclamation.findMany({
             where: {
@@ -74,9 +65,7 @@ class ReclamationService {
             orderBy: { date: 'asc' },
         });
     }
-    /**
-   * Admin: Gets a specific reclamation by ID with client details
-   */
+    // get a specific reclamation by id for admin
     static async getReclamationById(reclamationId) {
         const reclamation = await db_1.default.reclamation.findUnique({
             where: { id: reclamationId },
@@ -97,10 +86,8 @@ class ReclamationService {
         }
         return reclamation;
     }
-    /**
-     * Admin: Processes a Reclamation by updating its status and response.
-     * Mapped from "traiterReclamation(id, statut, reponse)" in the Sequence Diagram.
-     */
+    // processing reclamation by updating its status and adding admin response
+    // mapped from "traiterReclamation(id, statut, reponse)" dans le diagramme de séquence
     static async processReclamation(reclamationId, data) {
         const reclamation = await db_1.default.reclamation.findUnique({
             where: { id: reclamationId },

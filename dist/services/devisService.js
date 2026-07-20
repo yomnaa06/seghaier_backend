@@ -6,11 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DevisService = void 0;
 const db_1 = __importDefault(require("../config/db"));
 class DevisService {
-    /**
-     * Creates a new Devis request for a Client.
-     */
+    //creation d'un nouveau devis pour client donné
     static async createDevis(clientId, data) {
-        // Verify client exists
+        // Verification que  client exists
         const clientExists = await db_1.default.client.findUnique({
             where: { id: clientId },
         });
@@ -27,18 +25,14 @@ class DevisService {
             },
         });
     }
-    /**
-     * Gets the list of Devis requested by a specific Client.
-     */
+    // yekhou liste de devis requested by a speciic client
     static async getClientDevis(clientId) {
         return db_1.default.devis.findMany({
             where: { clientId: clientId },
             orderBy: { dateDemande: 'desc' },
         });
     }
-    /**
-     * Gets all Devis requests (for Admin).
-     */
+    // get all devis requests for admin
     static async getAllDevis() {
         return db_1.default.devis.findMany({
             include: {
@@ -52,9 +46,7 @@ class DevisService {
             orderBy: { dateDemande: 'desc' },
         });
     }
-    /**
-     * Gets pending Devis (EN_ATTENTE) for Admin notifications
-     */
+    // prend devis en attente pour admin dashboard
     static async getPendingDevis() {
         return db_1.default.devis.findMany({
             where: { statut: 'EN_ATTENTE' },
@@ -78,9 +70,7 @@ class DevisService {
             orderBy: { dateDemande: 'asc' },
         });
     }
-    /**
-     * Gets a specific Devis by ID with client details
-     */
+    // get specific devis by id for client 
     static async getDevisById(devisId) {
         const devis = await db_1.default.devis.findUnique({
             where: { id: devisId },
@@ -101,9 +91,7 @@ class DevisService {
         }
         return devis;
     }
-    /**
-     * Validates a Devis (sets status to Valide).
-     */
+    // valider devis
     static async validateDevis(devisId) {
         const devis = await db_1.default.devis.findUnique({
             where: { id: devisId },
@@ -119,9 +107,7 @@ class DevisService {
             },
         });
     }
-    /**
-     * Refuses a Devis (sets status to Refus with reason).
-     */
+    // refuser devis
     static async refuseDevis(devisId, motifRefus) {
         const devis = await db_1.default.devis.findUnique({
             where: { id: devisId },
@@ -141,9 +127,7 @@ class DevisService {
             },
         });
     }
-    /**
-     * Admin: Delete a devis
-     */
+    // admin efface devis
     static async deleteDevis(devisId) {
         const devis = await db_1.default.devis.findUnique({
             where: { id: devisId }
@@ -155,9 +139,7 @@ class DevisService {
             where: { id: devisId }
         });
     }
-    /**
-     * Admin: Get devis statistics for dashboard
-     */
+    // admin prend devis statistiques pour dashboard
     static async getDevisStats() {
         const [total, enAttente, valide, refus, enCours] = await Promise.all([
             db_1.default.devis.count(),

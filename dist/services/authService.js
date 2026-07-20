@@ -40,13 +40,9 @@ exports.AuthService = void 0;
 const db_1 = __importDefault(require("../config/db"));
 const crypto_1 = require("../utils/crypto");
 const auth_1 = require("../utils/auth");
-/**
- * Service for Authentication and User management
- */
+//service authentification and user management
 class AuthService {
-    /**
-     * Registers a new Individual Client.
-     */
+    // Handles individual client sign-up
     static async registerIndividual(data) {
         // Check if email already exists
         const existingUser = await db_1.default.user.findUnique({
@@ -58,7 +54,7 @@ class AuthService {
         const hashedPassword = await (0, crypto_1.hashPassword)(data.password);
         // Run transaction
         return db_1.default.$transaction(async (tx) => {
-            // 1. Create User
+            // Creation de User
             const user = await tx.user.create({
                 data: {
                     email: data.email,
@@ -67,7 +63,7 @@ class AuthService {
                     dateCreation: new Date(),
                 },
             });
-            // 2. creation du client de type individuel
+            //  creation du client de type individuel
             const client = await tx.client.create({
                 data: {
                     id: user.id,
@@ -103,9 +99,7 @@ class AuthService {
             };
         });
     }
-    /**
-     * Registers a new Company Client.
-     */
+    //enregistrement d'un nouveau client , type societe
     static async registerCompany(data) {
         // Check if email already exists
         const existingUser = await db_1.default.user.findUnique({
@@ -117,7 +111,7 @@ class AuthService {
         const hashedPassword = await (0, crypto_1.hashPassword)(data.password);
         // Run transaction
         return db_1.default.$transaction(async (tx) => {
-            // 1. Create User
+            //creation de user
             const user = await tx.user.create({
                 data: {
                     email: data.email,
@@ -126,7 +120,7 @@ class AuthService {
                     dateCreation: new Date(),
                 },
             });
-            // 2. Create Client profile with SOCIETE type
+            //  Create Client profile with SOCIETE type
             const client = await tx.client.create({
                 data: {
                     id: user.id,
@@ -162,9 +156,7 @@ class AuthService {
             };
         });
     }
-    /**
-     * Authenticates a User (Client or Admin) and returns a JWT token.
-     */
+    //authentification du client ou admin et return jwt token
     static async loginUser(data) {
         const user = await db_1.default.user.findUnique({
             where: { email: data.email },
@@ -237,9 +229,7 @@ class AuthService {
         }
         throw new Error('Profil utilisateur non trouvé.');
     }
-    /**
-     * Retrieves profile details for a client.
-     */
+    // extraction profile details for a client basé sur userId
     static async getClientProfile(userId) {
         const client = await db_1.default.client.findUnique({
             where: { id: userId },
@@ -271,9 +261,7 @@ class AuthService {
             dateCreation: client.user.dateCreation,
         };
     }
-    /**
-     * Updates profile details for a client.
-     */
+    // update de profil client basé sur userId et donnés fournies
     static async updateClientProfile(userId, data) {
         const client = await db_1.default.client.findUnique({
             where: { id: userId },
@@ -297,9 +285,7 @@ class AuthService {
         });
         return updatedClient;
     }
-    /**
-     * Gets client type info for registration forms
-     */
+    // yekhou type client for registration forms
     static async getClientTypes() {
         return {
             INDIVIDUEL: {
@@ -312,9 +298,7 @@ class AuthService {
             }
         };
     }
-    /**
-   * Generate password reset token
-   */
+    //generating password reset token
     static async generateResetToken(email) {
         const user = await db_1.default.user.findUnique({
             where: { email },
@@ -335,9 +319,7 @@ class AuthService {
         });
         return resetToken;
     }
-    /**
-     * Reset password using token
-     */
+    //resetting mot de passe avec token
     static async resetPassword(token, newPassword) {
         const user = await db_1.default.user.findFirst({
             where: {

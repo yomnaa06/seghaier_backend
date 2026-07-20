@@ -2,11 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const authService_1 = require("../services/authService");
+const emailService_1 = require("../services/emailService");
 class AuthController {
-    /**
-     * Register a new client (Individual or Company)
-     * POST /api/auth/register
-     */
+    // enregistrement d'un nouveau client (Individual or Company)
+    // POST /api/auth/register
     static async register(req, res) {
         try {
             const { clientType, email, password, nom, prenom, nomSociete, telephone, adresse, codePostal, ville, matriculeFiscal, brancheContact, produitsInterets } = req.body;
@@ -49,10 +48,8 @@ class AuthController {
             });
         }
     }
-    /**
-     * Login for Client or Admin
-     * POST /api/auth/login
-     */
+    // Login pour Client ou Admin
+    // POST /api/auth/login
     static async login(req, res) {
         try {
             const { email, password, clientType } = req.body;
@@ -75,10 +72,8 @@ class AuthController {
             });
         }
     }
-    /**
-     * Get authenticated client profile
-     * GET /api/auth/profile
-     */
+    // Get authenticated client profile
+    // GET /api/auth/profile
     static async getProfile(req, res) {
         try {
             const userId = req.user?.userId;
@@ -95,10 +90,8 @@ class AuthController {
             });
         }
     }
-    /**
-     * Update authenticated client profile
-     * PUT /api/auth/profile
-     */
+    // Update authenticated client profile
+    // PUT /api/auth/profile
     static async updateProfile(req, res) {
         try {
             const userId = req.user?.userId;
@@ -119,10 +112,8 @@ class AuthController {
             });
         }
     }
-    /**
-   * Request password reset
-   * POST /api/auth/forgot-password
-   */
+    // Request password reset - sends email with reset link
+    // POST /api/auth/forgot-password
     static async forgotPassword(req, res) {
         try {
             const { email } = req.body;
@@ -133,11 +124,11 @@ class AuthController {
                 });
             }
             const resetToken = await authService_1.AuthService.generateResetToken(email);
-            // For testing - return token directly (remove in production!)
+            // Send email with reset link
+            await emailService_1.EmailService.sendPasswordResetEmail(email, resetToken);
             return res.status(200).json({
                 success: true,
-                message: 'Token généré avec succès.',
-                data: { resetToken },
+                message: 'Un email de réinitialisation a été envoyé.',
             });
         }
         catch (error) {
@@ -147,10 +138,8 @@ class AuthController {
             });
         }
     }
-    /**
-     * Reset password with token
-     * POST /api/auth/reset-password
-     */
+    // Reset password with token
+    // POST /api/auth/reset-password
     static async resetPassword(req, res) {
         try {
             const { token, password } = req.body;

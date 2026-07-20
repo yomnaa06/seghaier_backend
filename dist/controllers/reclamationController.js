@@ -3,10 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReclamationController = void 0;
 const reclamationService_1 = require("../services/reclamationService");
 class ReclamationController {
-    /**
-     * Client: Create a new reclamation
-     * POST /api/reclamations
-     */
+    // Client: Create a new reclamation
+    //POST /api/reclamations
     static async create(req, res) {
         try {
             const clientId = req.user?.userId;
@@ -38,10 +36,8 @@ class ReclamationController {
             });
         }
     }
-    /**
-     * Client: Get their own reclamations history
-     * GET /api/reclamations/my
-     */
+    // Client: Get their own reclamations historique
+    // GET /api/reclamations/my
     static async getClientHistory(req, res) {
         try {
             const clientId = req.user?.userId;
@@ -58,10 +54,8 @@ class ReclamationController {
             });
         }
     }
-    /**
-     * Admin: Get all reclamations
-     * GET /api/admin/reclamations
-     */
+    // Admin: Get all reclamations
+    // GET /api/admin/reclamations
     static async listAll(_req, res) {
         try {
             const reclamations = await reclamationService_1.ReclamationService.getAllReclamations();
@@ -74,10 +68,8 @@ class ReclamationController {
             });
         }
     }
-    /**
-     * Admin: Get pending reclamations
-     * GET /api/admin/reclamations/pending
-     */
+    // Admin: Get pending reclamations
+    // GET /api/admin/reclamations/pending
     static async listPending(_req, res) {
         try {
             const reclamations = await reclamationService_1.ReclamationService.getPendingReclamations();
@@ -90,10 +82,8 @@ class ReclamationController {
             });
         }
     }
-    /**
-     * Admin: Process (update) a reclamation
-     * PUT /api/admin/reclamations/:id/process
-     */
+    // Admin: update une reclamation
+    // PUT /api/admin/reclamations/:id/process
     static async process(req, res) {
         try {
             const reclamationId = parseInt(req.params.id, 10);
